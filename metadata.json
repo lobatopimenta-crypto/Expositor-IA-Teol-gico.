@@ -1,0 +1,5 @@
+{
+  "name": "Exegesis AI",
+  "description": "An advanced biblical exegesis assistant that generates systematic studies, lexical analysis, and theological context using Gemini AI.",
+  "requestFramePermissions": []
+}
