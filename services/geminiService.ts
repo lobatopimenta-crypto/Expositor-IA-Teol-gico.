@@ -169,7 +169,7 @@ export const generateStudy = async (
     case 'rapido':
       toneInstruction = "Tom devocional, inspirador, prático e conciso. Linguagem simples e direta.";
       lexicalInstruction = "Selecione 3 a 5 palavras-chave essenciais. Inclua morfologia básica e pelo menos 2 nuances de significado para cada uma.";
-      theologyInstruction = "Foque no consenso geral cristão e na aplicação para a vida diária. Bibliografia deve ser de livros populares.";
+      theologyInstruction = "Apresente 3 ou 4 visões principais focadas no consenso cristão geral (ex: Histórica, Evangélica, Aplicação Prática). Evite controvérsias excessivas.";
       depthInstructions = "Priorize a brevidade. O objetivo é leitura rápida e edificação.";
       sermonInstruction = "Gere um esboço de sermão DEVOCIONAL curto. Defina o foco textual exato. Use referências bíblicas claras para apoiar cada aplicação.";
       break;
@@ -177,15 +177,15 @@ export const generateStudy = async (
     case 'academico':
       toneInstruction = "Tom estritamente acadêmico, crítico e exegético. Linguagem formal, técnica.";
       lexicalInstruction = "Análise profunda de 5 a 7 palavras. É OBRIGATÓRIO incluir morfologia completa (classe, tempo, voz, modo, caso) e explorar pelo menos 2 nuances distintas de tradução/significado.";
-      theologyInstruction = "Aborde debates teológicos complexos, história da interpretação e matizes das tradições (Patrística, Reformada, Liberal, Contemporânea). Cite exegetas críticos e comentários técnicos.";
-      depthInstructions = "Priorize a profundidade e a precisão técnica. A seção de interpretação deve confrontar diferentes escolas de pensamento.";
+      theologyInstruction = "Análise exaustiva das linhas interpretativas (mínimo 6). Inclua necessariamente: 1. Exegese Patrística/Medieval; 2. Reforma Magisterial (Calvino/Lutero); 3. Ortodoxia Oriental; 4. Perspectiva Moderna/Crítica Histórica; 5. Visão Pentecostal/Carismática; 6. Perspectiva Judaica (se AT) ou Anabatista. Confronte os argumentos.";
+      depthInstructions = "Priorize a profundidade e a precisão técnica. A seção de interpretação deve confrontar diferentes escolas de pensamento e incluir vozes divergentes.";
       sermonInstruction = "Gere um esboço de sermão EXPOSITIVO SÓLIDO e denso. Cite abundantemente outros textos bíblicos com referência completa (Livro Cap:Verso) para justificar a exegese e a aplicação.";
       break;
     
     case 'sermao':
       toneInstruction = "Tom pastoral, proclamativo, persuasivo e eloquente. Focado na comunicação oral e aplicação.";
       lexicalInstruction = "Selecione 3 a 5 palavras-chave que trazem riqueza para a pregação. Explique-as de forma que possa ser usada no púlpito.";
-      theologyInstruction = "Foque na teologia prática e na ortodoxia cristã. Apresente visões teológicas de forma que edifique a congregação.";
+      theologyInstruction = "Apresente uma variedade de visões (5 a 6) que enriqueçam a pregação, incluindo: Reformada, Wesleyana, Pentecostal, e citações de pregadores clássicos (Spurgeon, Lloyd-Jones). Foque na aplicação homilética.";
       depthInstructions = "O foco total é gerar um sermão bíblico completo e estruturado para o pregador. A exegese deve servir à homilética.";
       sermonInstruction = "PRIORIDADE MÁXIMA: Gere um SERMÃO EXPOSITIVO COMPLETO. Estruture com Introdução, Divisões Claras (Tópicos), Ilustrações e Conclusão. Use OBRIGATORIAMENTE referências bíblicas (ex: Rm 3:23) na explicação e aplicação de CADA ponto.";
       break;
@@ -194,7 +194,7 @@ export const generateStudy = async (
     default:
       toneInstruction = "Tom educacional, didático e equilibrado. Linguagem acessível mas robusta.";
       lexicalInstruction = "Selecione 5 a 7 palavras importantes. Inclua morfologia detalhada (classe, tempo, voz, modo) e explique pelo menos 2 nuances de significado para cada termo.";
-      theologyInstruction = "Apresente pelo menos 5 visões teológicas distintas (ex: Católica, Reformada, Pentecostal, Wesleyana, Contemporânea). Bibliografia mista entre acadêmica e pastoral.";
+      theologyInstruction = "Apresente uma ampla gama de linhas interpretativas (mínimo 5 a 7), indo além do básico. Inclua: Tradição Católica, Reformada (Calvinista), Luterana, Armínio-Wesleyana, Pentecostal/Carismática e Contemporânea. Destaque as nuances entre elas.";
       depthInstructions = "Equilíbrio entre profundidade e clareza. Ideal para preparar uma aula de Escola Bíblica.";
       sermonInstruction = "Gere um esboço de sermão EXPOSITIVO equilibrado. Cada ponto de aplicação DEVE conter citações bíblicas de apoio com referências (ex: Jo 1:1).";
       break;
