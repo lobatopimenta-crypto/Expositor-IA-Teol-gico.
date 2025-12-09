@@ -49,8 +49,8 @@ const studySchema: Schema = {
               word: { type: Type.STRING },
               lemma: { type: Type.STRING },
               transliteration: { type: Type.STRING },
-              morphology: { type: Type.STRING, description: "Detailed morphology: Part of speech, Tense, Voice, Mood, Case (e.g. 'Verbo Aoristo Indicativo Ativo')" },
-              meaning: { type: Type.STRING, description: "Definition and at least 2 distinct nuances of meaning or translation options" },
+              morphology: { type: Type.STRING, description: "Strict morphological breakdown: Part of speech, Tense, Voice, Mood, Case, Gender, Number (e.g. 'Verbo Aoristo Indicativo Ativo, 3ª Sing')" },
+              meaning: { type: Type.STRING, description: "Definition and at least 2 distinct semantic nuances or translation options" },
             },
             required: ["word", "lemma", "meaning"],
           },
@@ -73,7 +73,7 @@ const studySchema: Schema = {
             type: Type.OBJECT,
             properties: {
               name: { type: Type.STRING },
-              era: { type: Type.STRING, description: "Historical era, e.g., 'Patrística', 'Reforma'" },
+              era: { type: Type.STRING, description: "Historical period/Century (e.g., 'Patrística (Séc IV)', 'Reforma (Séc XVI)', 'Contemporâneo')" },
               view: { type: Type.STRING, description: "Summary of their specific view on this passage" },
             },
             required: ["name", "era", "view"],
@@ -169,23 +169,23 @@ export const generateStudy = async (
     case 'rapido':
       toneInstruction = "Tom devocional, inspirador, prático e conciso. Linguagem simples e direta.";
       lexicalInstruction = "Selecione 3 a 5 palavras-chave essenciais. Inclua morfologia básica e pelo menos 2 nuances de significado para cada uma.";
-      theologyInstruction = "Apresente 3 ou 4 visões principais focadas no consenso cristão geral (ex: Histórica, Evangélica, Aplicação Prática). Evite controvérsias excessivas.";
+      theologyInstruction = "Apresente 3 ou 4 visões principais focadas no consenso cristão geral (ex: Histórica, Evangélica, Aplicação Prática). Liste teólogos breves e indique sua era (ex: Séc XX).";
       depthInstructions = "Priorize a brevidade. O objetivo é leitura rápida e edificação.";
       sermonInstruction = "Gere um esboço de sermão DEVOCIONAL curto. Defina o foco textual exato. Use referências bíblicas claras para apoiar cada aplicação.";
       break;
 
     case 'academico':
       toneInstruction = "Tom estritamente acadêmico, crítico e exegético. Linguagem formal, técnica.";
-      lexicalInstruction = "Análise profunda de 5 a 7 palavras. É OBRIGATÓRIO incluir morfologia completa (classe, tempo, voz, modo, caso) e explorar pelo menos 2 nuances distintas de tradução/significado.";
-      theologyInstruction = "Análise exaustiva das linhas interpretativas (mínimo 6). Inclua necessariamente: 1. Exegese Patrística/Medieval; 2. Reforma Magisterial (Calvino/Lutero); 3. Ortodoxia Oriental; 4. Perspectiva Moderna/Crítica Histórica; 5. Visão Pentecostal/Carismática; 6. Perspectiva Judaica (se AT) ou Anabatista. Confronte os argumentos.";
-      depthInstructions = "Priorize a profundidade e a precisão técnica. A seção de interpretação deve confrontar diferentes escolas de pensamento e incluir vozes divergentes.";
+      lexicalInstruction = "OBRIGATÓRIO: Analise entre 5 e 7 palavras gregas/hebraicas chave. Para CADA palavra, forneça a MORFOLOGIA COMPLETA (Classe, Tempo, Voz, Modo, Caso, Gênero, Número) e detalhe pelo menos 2 nuances semânticas distintas ou opções de tradução baseadas em léxicos acadêmicos (BDAG/HALOT).";
+      theologyInstruction = "Análise exaustiva das linhas interpretativas (mínimo 6 tradições). Para a seção de teólogos, É OBRIGATÓRIO preencher o campo 'era' com o período histórico específico (ex: 'Patrística', 'Escolástica', 'Séc. XIX'). Cite autores de peso acadêmico.";
+      depthInstructions = "Priorize a profundidade técnica, crítica textual e precisão histórica. A seção de interpretação deve confrontar diferentes escolas de pensamento.";
       sermonInstruction = "Gere um esboço de sermão EXPOSITIVO SÓLIDO e denso. Cite abundantemente outros textos bíblicos com referência completa (Livro Cap:Verso) para justificar a exegese e a aplicação.";
       break;
     
     case 'sermao':
       toneInstruction = "Tom pastoral, proclamativo, persuasivo e eloquente. Focado na comunicação oral e aplicação.";
       lexicalInstruction = "Selecione 3 a 5 palavras-chave que trazem riqueza para a pregação. Explique-as de forma que possa ser usada no púlpito.";
-      theologyInstruction = "Apresente uma variedade de visões (5 a 6) que enriqueçam a pregação, incluindo: Reformada, Wesleyana, Pentecostal, e citações de pregadores clássicos (Spurgeon, Lloyd-Jones). Foque na aplicação homilética.";
+      theologyInstruction = "Apresente uma variedade de visões (5 a 6) que enriqueçam a pregação, incluindo: Reformada, Wesleyana, Pentecostal. Cite pregadores clássicos e INDIQUE A ERA de cada um (ex: 'Puritano', 'Séc XIX').";
       depthInstructions = "O foco total é gerar um sermão bíblico completo e estruturado para o pregador. A exegese deve servir à homilética.";
       sermonInstruction = "PRIORIDADE MÁXIMA: Gere um SERMÃO EXPOSITIVO COMPLETO. Estruture com Introdução, Divisões Claras (Tópicos), Ilustrações e Conclusão. Use OBRIGATORIAMENTE referências bíblicas (ex: Rm 3:23) na explicação e aplicação de CADA ponto.";
       break;
@@ -194,7 +194,7 @@ export const generateStudy = async (
     default:
       toneInstruction = "Tom educacional, didático e equilibrado. Linguagem acessível mas robusta.";
       lexicalInstruction = "Selecione 5 a 7 palavras importantes. Inclua morfologia detalhada (classe, tempo, voz, modo) e explique pelo menos 2 nuances de significado para cada termo.";
-      theologyInstruction = "Apresente uma ampla gama de linhas interpretativas (mínimo 5 a 7), indo além do básico. Inclua: Tradição Católica, Reformada (Calvinista), Luterana, Armínio-Wesleyana, Pentecostal/Carismática e Contemporânea. Destaque as nuances entre elas.";
+      theologyInstruction = "Apresente uma ampla gama de linhas interpretativas (mínimo 5 a 7). Inclua: Tradição Católica, Reformada (Calvinista), Luterana, Armínio-Wesleyana, Pentecostal. Ao citar teólogos, OBRIGATÓRIO incluir o campo 'era' com o período histórico.";
       depthInstructions = "Equilíbrio entre profundidade e clareza. Ideal para preparar uma aula de Escola Bíblica.";
       sermonInstruction = "Gere um esboço de sermão EXPOSITIVO equilibrado. Cada ponto de aplicação DEVE conter citações bíblicas de apoio com referências (ex: Jo 1:1).";
       break;
@@ -218,7 +218,7 @@ export const generateStudy = async (
     Siga estritamente estas instruções para o conteúdo:
     
     1. ANÁLISE LÉXICA: ${lexicalInstruction}
-    2. TEOLOGIA E INTÉRPRETES: ${theologyInstruction}
+    2. TEOLOGIA E INTÉRPRETES: ${theologyInstruction}. Certifique-se de preencher o campo 'era' para todos os teólogos listados.
     3. TEXTO BASE: Retorne o texto completo na tradução ${request.translation}.
     4. PARALELOS E CORRELAÇÕES: Busque textos paralelos em outros livros (ex: se for um Evangelho, busque os Sinóticos; se for AT, onde é citado no NT). Liste pelo menos 3 correlações.
     5. ESTRUTURA: Preencha todos os campos do JSON Schema fornecido.
