@@ -236,9 +236,10 @@ export const generateStudy = async (
       const response = await ai.models.generateContent({
         model: "gemini-2.5-flash",
         contents: [
-          { role: "user", parts: [{ text: systemPrompt + "\n" + userPrompt }] },
+          { role: "user", parts: [{ text: userPrompt }] },
         ],
         config: {
+          systemInstruction: systemPrompt,
           responseMimeType: "application/json",
           responseSchema: studySchema,
           temperature: request.depth === 'academico' ? 0.3 : 0.7,
