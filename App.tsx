@@ -106,7 +106,12 @@ const App: React.FC = () => {
   }
 
   return (
-    <div className="h-screen w-full bg-stone-50 text-stone-900 font-sans">
+    <div className="h-screen w-full bg-stone-50 text-stone-900 font-sans relative">
+      {/* Assinatura Celpf Fixa */}
+      <div className="fixed bottom-2 right-4 z-[100] pointer-events-none select-none opacity-40 mix-blend-multiply">
+        <span className="font-serif italic text-[10px] text-stone-400 tracking-widest">Celpf</span>
+      </div>
+
       {currentStudy ? (
         <StudyViewer data={currentStudy} onBack={handleBack} />
       ) : (

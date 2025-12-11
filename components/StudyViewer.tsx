@@ -18,7 +18,8 @@ import {
   Mic2,
   GitMerge,
   Share2,
-  Check
+  Check,
+  Target
 } from 'lucide-react';
 import { exportToMarkdown, exportToPPTX, exportToDoc, exportToPDF } from '../services/exportService';
 
@@ -35,6 +36,26 @@ type TabID =
   | 'application' 
   | 'slides'
   | 'sermon';
+
+// Helper function to render text with highlighted bible references
+const renderTextWithRefs = (text: string) => {
+  if (!text) return null;
+  // Matches references inside parentheses like (Mateus 3:11) or (1 João 1:9)
+  // Simple regex to catch common formats used by the AI
+  const parts = text.split(/(\((?:[1-3]\s?)?[A-Za-zÀ-ÿ]+\s\d+:\d+(?:-\d+)?\))/g);
+  
+  return parts.map((part, i) => {
+      // Check if this part matches the reference pattern
+      if (part.match(/^\((?:[1-3]\s?)?[A-Za-zÀ-ÿ]+\s\d+:\d+(?:-\d+)?\)$/)) {
+          return (
+              <span key={i} className="inline-flex items-center px-1.5 py-0.5 rounded text-[0.85em] font-bold bg-stone-100 text-stone-600 mx-1 border border-stone-200 align-baseline whitespace-nowrap">
+                  {part.replace(/[()]/g, '')}
+              </span>
+          );
+      }
+      return part;
+  });
+};
 
 const StudyViewer: React.FC<StudyViewerProps> = ({ data, onBack }) => {
   const [activeTab, setActiveTab] = useState<TabID>('text');
@@ -115,11 +136,25 @@ const StudyViewer: React.FC<StudyViewerProps> = ({ data, onBack }) => {
           >
             <ChevronLeft className="w-5 h-5" />
           </button>
-          <div>
-            <h1 className="text-xl md:text-2xl font-bold text-stone-900 font-serif tracking-tight">{data.meta.reference}</h1>
-            <span className="text-xs font-semibold text-stone-500 px-2 py-0.5 bg-stone-100 rounded uppercase tracking-wider border border-stone-200 font-sans">
-              {data.meta.translation}
-            </span>
+          <div className="flex items-center gap-3">
+             <div className="hidden sm:block">
+                {/* Small Logo for Header */}
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-8 h-8 text-stone-800">
+                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                    <line x1="12" y1="6" x2="12" y2="12"></line>
+                    <line x1="9" y1="9" x2="15" y2="9"></line>
+                    <path d="M12 2l1 2"></path>
+                    <path d="M10 2.5l1 1.5"></path>
+                    <path d="M14 2.5l-1 1.5"></path>
+                </svg>
+             </div>
+             <div>
+                <h1 className="text-xl md:text-2xl font-bold text-stone-900 font-serif tracking-tight">{data.meta.reference}</h1>
+                <span className="text-xs font-semibold text-stone-500 px-2 py-0.5 bg-stone-100 rounded uppercase tracking-wider border border-stone-200 font-sans">
+                {data.meta.translation}
+                </span>
+             </div>
           </div>
         </div>
         
@@ -134,7 +169,7 @@ const StudyViewer: React.FC<StudyViewerProps> = ({ data, onBack }) => {
                     {showShareToast ? <Check className="w-5 h-5 text-green-600" /> : <Share2 className="w-5 h-5" />}
                 </button>
                 {showShareToast && (
-                    <div className="absolute top-12 right-0 bg-stone-800 text-white text-xs py-1.5 px-3 rounded shadow-lg whitespace-nowrap animate-fadeIn font-sans">
+                    <div className="absolute top-12 right-0 bg-stone-800 text-white text-xs py-1.5 px-3 rounded shadow-lg whitespace-nowrap animate-fadeIn font-sans z-50">
                         Link copiado!
                     </div>
                 )}
@@ -342,7 +377,12 @@ const StudyViewer: React.FC<StudyViewerProps> = ({ data, onBack }) => {
                         <div className="p-2 bg-emerald-50 text-emerald-900 rounded-lg"><Book className="w-5 h-5" /></div>
                         <h2 className="text-2xl font-serif font-bold text-stone-900">Intertextualidade</h2>
                     </div>
-                    <p className="text-stone-700 leading-relaxed text-lg text-justify hyphens-auto font-sans">{data.content.intertextuality}</p>
+                    
+                    <div className="bg-stone-50 rounded-xl p-6 border border-stone-200">
+                        <p className="text-stone-700 leading-relaxed text-lg text-justify hyphens-auto font-sans italic">
+                            {data.content.intertextuality}
+                        </p>
+                    </div>
                 </section>
               </div>
             )}
@@ -391,7 +431,7 @@ const StudyViewer: React.FC<StudyViewerProps> = ({ data, onBack }) => {
                     <div className="grid md:grid-cols-2 gap-6">
                         {data.content.interpretations.map((item, i) => (
                             <div key={i} className="bg-white p-6 rounded-xl border border-stone-200 shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:border-stone-400 transition-colors">
-                                <span className="inline-block px-3 py-1 bg-stone-100 text-stone-700 text-xs font-bold rounded mb-4 uppercase tracking-wider font-sans">
+                                <span className="inline-block px-3 py-1 bg-stone-100 text-stone-700 text-xs font-bold rounded mb-4 uppercase tracking-wider font-sans border border-stone-200">
                                     {item.tradition}
                                 </span>
                                 <p className="text-stone-700 leading-relaxed text-justify hyphens-auto font-sans">{item.summary}</p>
@@ -405,22 +445,25 @@ const StudyViewer: React.FC<StudyViewerProps> = ({ data, onBack }) => {
                         <Users className="w-6 h-6 text-stone-600" />
                         Teólogos & Comentaristas
                     </h3>
-                    <div className="space-y-6">
+                    <div className="grid grid-cols-1 gap-6">
                         {data.content.theologians.map((t, i) => (
-                            <div key={i} className="flex gap-6 p-6 rounded-2xl bg-stone-50 border border-stone-100">
-                                <div className="hidden sm:flex w-14 h-14 rounded-full bg-stone-200 border-2 border-white shadow-sm items-center justify-center text-stone-600 font-bold text-2xl font-serif shrink-0">
-                                    {t.name.charAt(0)}
+                            <div key={i} className="flex flex-col sm:flex-row gap-6 p-6 rounded-xl bg-stone-50 border border-stone-200 hover:shadow-md transition-shadow relative overflow-hidden group">
+                                <div className="absolute top-0 right-0 px-3 py-1 bg-stone-200 text-stone-600 text-[10px] font-bold uppercase tracking-widest font-sans rounded-bl-lg opacity-80 group-hover:opacity-100 transition-opacity">
+                                    {t.era}
                                 </div>
-                                <div>
-                                    <div className="flex flex-wrap items-center gap-3 mb-2">
-                                        <h4 className="font-bold text-stone-900 text-lg font-serif">{t.name}</h4>
-                                        <span className="text-xs font-medium px-2 py-0.5 rounded border border-stone-200 text-stone-500 uppercase tracking-wider bg-white font-sans">
-                                            {t.era}
-                                        </span>
+                                <div className="flex-shrink-0 flex items-start pt-1">
+                                    <div className="w-12 h-12 rounded-full bg-white border-2 border-stone-100 shadow-sm flex items-center justify-center text-stone-700 font-serif font-bold text-xl">
+                                        {t.name.charAt(0)}
                                     </div>
-                                    <p className="text-stone-700 text-lg leading-relaxed italic text-opacity-90 text-justify hyphens-auto font-sans">
-                                        "{t.view}"
-                                    </p>
+                                </div>
+                                <div className="flex-1 pt-1">
+                                    <h4 className="font-bold text-stone-900 text-lg font-serif mb-3">{t.name}</h4>
+                                    <div className="relative">
+                                        <div className="absolute left-0 top-0 bottom-0 w-1 bg-stone-300 rounded-full my-1"></div>
+                                        <p className="text-stone-700 text-lg leading-relaxed italic pl-4 text-justify hyphens-auto font-sans">
+                                            "{t.view}"
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
                         ))}
@@ -486,51 +529,86 @@ const StudyViewer: React.FC<StudyViewerProps> = ({ data, onBack }) => {
                         <h2 className="font-serif text-3xl md:text-4xl font-bold text-stone-900 mb-2 leading-tight">
                             {data.sermon.title}
                         </h2>
-                        <p className="font-sans text-stone-500 uppercase tracking-widest text-sm font-semibold mb-2">
+                        <p className="font-sans text-stone-500 uppercase tracking-widest text-sm font-semibold mb-4">
                             {data.meta.reference}
                         </p>
                         {data.sermon.text_focus && (
-                             <p className="font-serif text-stone-600 italic text-lg bg-stone-50 inline-block px-4 py-1 rounded">
-                                Texto Foco: {data.sermon.text_focus}
-                            </p>
+                             <div className="inline-flex items-center gap-2 font-serif text-stone-600 text-lg bg-stone-50 px-5 py-2 rounded-full border border-stone-200 shadow-sm">
+                                <Target className="w-4 h-4 text-amber-600" />
+                                <span className="text-stone-400 text-xs font-bold uppercase tracking-wider mr-1 font-sans">Foco:</span>
+                                <span className="italic">{data.sermon.text_focus}</span>
+                            </div>
                         )}
                     </div>
 
                     <div className="prose prose-stone max-w-none">
                         {/* Introdução */}
-                        <div className="mb-8">
-                            <h3 className="font-bold text-stone-900 text-xl uppercase tracking-wide border-l-4 border-amber-500 pl-3 mb-4 font-serif">
+                        <div className="mb-12">
+                            <h3 className="font-bold text-stone-900 text-xl uppercase tracking-wide border-l-4 border-amber-500 pl-4 mb-4 font-serif">
                                 Introdução
                             </h3>
                             <p className="text-lg leading-relaxed text-stone-800 font-sans text-justify hyphens-auto">
-                                {data.sermon.introduction}
+                                {renderTextWithRefs(data.sermon.introduction)}
                             </p>
                         </div>
 
-                        {/* Tópicos */}
-                        <div className="space-y-10">
+                        {/* Tópicos Redesenhados */}
+                        <div className="space-y-12">
                             {data.sermon.points.map((point, idx) => (
-                                <div key={idx} className="bg-stone-50 p-6 rounded-xl border border-stone-100">
-                                    <div className="flex items-center gap-3 mb-3">
-                                        <span className="bg-stone-900 text-white w-8 h-8 flex items-center justify-center rounded-full font-bold font-serif shadow-sm">
+                                <div key={idx} className="bg-white border border-stone-200 rounded-xl overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:shadow-md transition-shadow">
+                                    {/* Header do Ponto */}
+                                    <div className="bg-stone-50 px-6 py-5 border-b border-stone-200 flex items-center gap-4">
+                                        <span className="flex items-center justify-center w-8 h-8 rounded-full bg-stone-900 text-white font-serif font-bold text-lg shadow-sm shrink-0">
                                             {idx + 1}
                                         </span>
-                                        <h4 className="font-bold text-stone-900 text-xl font-serif">
+                                        <h4 className="text-xl font-serif font-bold text-stone-900">
                                             {point.title}
                                         </h4>
                                     </div>
-                                    <p className="text-stone-800 text-lg mb-4 leading-relaxed pl-11 text-justify hyphens-auto font-sans">
-                                        {point.explanation}
-                                    </p>
-                                    
-                                    <div className="pl-11 space-y-3">
-                                        <div className="flex gap-2 text-stone-600 italic bg-white p-3 rounded-lg border border-stone-100 text-base">
-                                            <Lightbulb className="w-5 h-5 shrink-0 text-amber-500 mt-0.5" />
-                                            <span className="text-justify hyphens-auto font-sans">{point.illustration}</span>
+
+                                    <div className="divide-y divide-stone-100">
+                                        {/* Explicação */}
+                                        <div className="p-8">
+                                            <div className="mb-3 flex items-center gap-2">
+                                                <span className="text-[10px] font-bold uppercase tracking-widest text-stone-400 border border-stone-200 px-2 py-0.5 rounded-full bg-stone-50">Explicação</span>
+                                            </div>
+                                            <p className="text-lg text-stone-800 leading-relaxed font-sans text-justify hyphens-auto">
+                                                {renderTextWithRefs(point.explanation)}
+                                            </p>
                                         </div>
-                                        <div className="flex gap-2 text-stone-700 font-medium bg-stone-100 p-3 rounded-lg border border-stone-200 text-base">
-                                            <ArrowRight className="w-5 h-5 shrink-0 text-stone-900 mt-0.5" />
-                                            <span className="text-justify hyphens-auto font-sans">{point.application}</span>
+                                        
+                                        {/* Ilustração */}
+                                        <div className="px-8 py-6 bg-amber-50/40">
+                                            <div className="flex gap-5">
+                                                <div className="shrink-0 mt-1 p-2 bg-white rounded-lg border border-amber-100 text-amber-600 shadow-sm">
+                                                    <Lightbulb className="w-5 h-5" />
+                                                </div>
+                                                <div className="flex-1">
+                                                    <h5 className="text-sm font-bold text-amber-800/70 font-serif mb-2 uppercase tracking-wide">
+                                                        Ilustração
+                                                    </h5>
+                                                    <p className="text-stone-700 italic leading-relaxed font-sans text-justify hyphens-auto">
+                                                        "{renderTextWithRefs(point.illustration)}"
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {/* Aplicação */}
+                                        <div className="px-8 py-6 bg-stone-100/50">
+                                            <div className="flex gap-5">
+                                                <div className="shrink-0 mt-1 p-2 bg-white rounded-lg border border-stone-200 text-stone-900 shadow-sm">
+                                                    <ArrowRight className="w-5 h-5" />
+                                                </div>
+                                                <div className="flex-1">
+                                                    <h5 className="text-sm font-bold text-stone-900 font-serif mb-2 uppercase tracking-wide">
+                                                        Aplicação Prática
+                                                    </h5>
+                                                    <p className="text-stone-800 font-medium leading-relaxed font-sans text-justify hyphens-auto">
+                                                        {renderTextWithRefs(point.application)}
+                                                    </p>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -538,12 +616,12 @@ const StudyViewer: React.FC<StudyViewerProps> = ({ data, onBack }) => {
                         </div>
 
                         {/* Conclusão */}
-                        <div className="mt-10 pt-8 border-t border-stone-200">
-                             <h3 className="font-bold text-stone-900 text-xl uppercase tracking-wide border-l-4 border-stone-900 pl-3 mb-4 font-serif">
+                        <div className="mt-12 pt-8 border-t-2 border-stone-100">
+                             <h3 className="font-bold text-stone-900 text-xl uppercase tracking-wide border-l-4 border-stone-900 pl-4 mb-4 font-serif">
                                 Conclusão & Apelo
                             </h3>
                             <p className="text-lg leading-relaxed text-stone-800 font-sans text-justify hyphens-auto">
-                                {data.sermon.conclusion}
+                                {renderTextWithRefs(data.sermon.conclusion)}
                             </p>
                         </div>
                     </div>

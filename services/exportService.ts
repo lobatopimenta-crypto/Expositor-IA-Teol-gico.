@@ -122,7 +122,8 @@ export const exportToPPTX = async (data: StudyData) => {
     background: { color: 'FFFFFF' },
     objects: [
       { rect: { x: 0, y: 6.9, w: '100%', h: 0.6, fill: { color: '1c1917' } } }, // stone-900
-      { text: { text: 'Exegesis AI', options: { x: 0.5, y: 7.05, fontSize: 12, color: 'FFFFFF' } } }
+      { text: { text: 'Exegesis AI', options: { x: 0.5, y: 7.05, fontSize: 12, color: 'FFFFFF' } } },
+      { text: { text: 'Celpf', options: { x: 12.5, y: 7.05, fontSize: 10, color: 'AAAAAA', italic: true } } } // Added signature to slides
     ]
   });
 
@@ -220,6 +221,7 @@ export const exportToDoc = (data: StudyData) => {
         th, td { border: 1px solid #e7e5e4; padding: 8px; text-align: left; }
         th { background-color: #f5f5f4; }
         blockquote { border-left: 3px solid #a8a29e; margin-left: 20px; padding-left: 10px; color: #44403c; font-style: italic; text-align: justify; }
+        .footer-sig { text-align: right; font-size: 10pt; color: #a8a29e; font-style: italic; margin-top: 30px; }
       </style>
     </head>
     <body>
@@ -267,6 +269,7 @@ export const exportToDoc = (data: StudyData) => {
       
       ${sermonHtml}
 
+      <div class="footer-sig">Celpf</div>
     </body>
     </html>
   `;
@@ -358,7 +361,7 @@ export const exportToPDF = (data: StudyData) => {
     <div style="font-family: 'Times New Roman', serif; color: #1c1917;">
       
       <!-- CAPA -->
-      <div style="height: 1050px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; page-break-after: always; padding: 40px;">
+      <div style="height: 1050px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; page-break-after: always; padding: 40px; position: relative;">
         <div style="margin-bottom: 40px;">${logoSvg}</div>
         <h1 style="font-size: 48px; color: #1c1917; margin: 0 0 10px 0; font-weight: bold; letter-spacing: -1px;">Exegesis AI</h1>
         <p style="font-size: 18px; color: #78716c; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 60px;">Estudo Bíblico Sistemático</p>
@@ -368,9 +371,12 @@ export const exportToPDF = (data: StudyData) => {
         <h2 style="font-size: 36px; color: #1c1917; margin: 0 0 15px 0;">${data.meta.reference}</h2>
         <p style="font-size: 16px; color: #57534e; background-color: #f5f5f4; padding: 5px 15px; border-radius: 20px; display: inline-block;">Versão: ${data.meta.translation}</p>
         
-        <div style="margin-top: auto; color: #a8a29e; font-size: 14px;">
+        <div style="margin-top: auto; color: #a8a29e; font-size: 14px; position: relative;">
             <p>Gerado em ${new Date(data.meta.generated_at).toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
         </div>
+        
+        <!-- Signature in PDF Cover -->
+        <div style="position: absolute; bottom: 20px; right: 20px; font-style: italic; color: #d6d3d1; font-size: 12px;">Celpf</div>
       </div>
 
       <!-- CONTEÚDO -->

@@ -113,7 +113,7 @@ const studySchema: Schema = {
       type: Type.OBJECT,
       properties: {
         title: { type: Type.STRING, description: "Um título atraente e bíblico para o sermão" },
-        text_focus: { type: Type.STRING, description: "The specific verses used for the sermon (e.g. 'Mateus 3:11a-12')" },
+        text_focus: { type: Type.STRING, description: "MANDATORY: The specific verses or pericope focused on in this sermon (e.g. 'Mateus 3:11-12' or 'Versículos 1 a 4'). Must be specific." },
         introduction: { type: Type.STRING, description: "Gancho inicial e proposição do sermão" },
         points: {
           type: Type.ARRAY,
@@ -171,7 +171,7 @@ export const generateStudy = async (
       lexicalInstruction = "Selecione 3 a 5 palavras-chave essenciais. Inclua morfologia básica e pelo menos 2 nuances de significado para cada uma.";
       theologyInstruction = "Apresente 3 ou 4 visões principais focadas no consenso cristão geral (ex: Histórica, Evangélica, Aplicação Prática). Liste teólogos breves e indique sua era (ex: Séc XX).";
       depthInstructions = "Priorize a brevidade. O objetivo é leitura rápida e edificação.";
-      sermonInstruction = "Gere um esboço de sermão DEVOCIONAL curto. Defina o foco textual exato. Use referências bíblicas claras para apoiar cada aplicação.";
+      sermonInstruction = "Gere um esboço de sermão DEVOCIONAL curto. Defina o 'text_focus' com precisão (ex: apenas o versículo principal). Use referências bíblicas claras.";
       break;
 
     case 'academico':
@@ -224,36 +224,57 @@ export const generateStudy = async (
     5. ESTRUTURA: Preencha todos os campos do JSON Schema fornecido.
     6. SLIDES: Gere um esboço de apresentação compatível com o nível ${request.depth}.
     7. SERMÃO: ${sermonInstruction} 
-       - Preencha o campo 'text_focus' indicando exatamente quais versículos são o foco da pregação.
+       - CAMPO 'text_focus': Defina exatamente qual trecho, versículos ou perícope é a base deste sermão (ex: "v. 1-3" ou "Mateus 3:11"). NÃO deixe genérico.
        - IMPORTANTE: Em cada ponto do sermão (especialmente na Aplicação), você DEVE citar versículos bíblicos de apoio. Sempre que fizer uma citação ou alusão bíblica, coloque a referência completa ao lado, ex: "como Paulo diz (Romanos 3:23)".
   `;
 
-  try {
-    const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
-      contents: [
-        { role: "user", parts: [{ text: systemPrompt + "\n" + userPrompt }] },
-      ],
-      config: {
-        responseMimeType: "application/json",
-        responseSchema: studySchema,
-        temperature: request.depth === 'academico' ? 0.3 : 0.7,
-      },
-    });
+  const maxRetries = 3;
+  let lastError: any;
 
-    if (response.text) {
-      const data = JSON.parse(response.text) as StudyData;
-      // Enforce the generated_at date if the AI mocked it poorly
-      data.meta.generated_at = new Date().toISOString();
-      data.meta.translation = request.translation;
-      data.meta.reference = request.passage;
-      
-      return data;
-    } else {
-      throw new Error("Empty response from AI");
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      const response = await ai.models.generateContent({
+        model: "gemini-2.5-flash",
+        contents: [
+          { role: "user", parts: [{ text: systemPrompt + "\n" + userPrompt }] },
+        ],
+        config: {
+          responseMimeType: "application/json",
+          responseSchema: studySchema,
+          temperature: request.depth === 'academico' ? 0.3 : 0.7,
+        },
+      });
+
+      if (response.text) {
+        const data = JSON.parse(response.text) as StudyData;
+        // Enforce the generated_at date if the AI mocked it poorly
+        data.meta.generated_at = new Date().toISOString();
+        data.meta.translation = request.translation;
+        data.meta.reference = request.passage;
+        
+        return data;
+      } else {
+        throw new Error("Empty response from AI");
+      }
+    } catch (error: any) {
+        console.warn(`Gemini API Attempt ${attempt} failed:`, error);
+        lastError = error;
+        
+        // Retry logic for transient errors (Network/XHR or Server 500s)
+        const isRetryable = !error.status || error.status >= 500 || error.message?.includes("xhr error");
+        
+        if (isRetryable && attempt < maxRetries) {
+            // Exponential backoff: 1s, 2s, 4s
+            const delay = 1000 * Math.pow(2, attempt - 1);
+            await new Promise(resolve => setTimeout(resolve, delay));
+            continue;
+        }
+        
+        // If not retryable or max attempts reached, stop loop
+        break;
     }
-  } catch (error) {
-    console.error("Gemini API Error:", error);
-    throw error;
   }
+
+  console.error("Gemini API Final Error:", lastError);
+  throw lastError;
 };
