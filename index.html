@@ -13,6 +13,35 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,300;0,400;0,700;1,300&display=swap" rel="stylesheet">
     
+    <!-- Tailwind CSS (CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Inter', 'sans-serif'],
+              serif: ['Merriweather', 'serif'],
+            },
+            colors: {
+              bible: {
+                50: '#fdfbf7',
+                100: '#f9f5eb',
+                200: '#f1e8d4',
+                300: '#e5d3b0',
+                400: '#d5b683',
+                500: '#c59a5c',
+                600: '#aa7e46',
+                700: '#896238',
+                800: '#714f33',
+                900: '#5e412d',
+              }
+            }
+          }
+        }
+      }
+    </script>
+    
     <!-- External Libraries for Export -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/gitbrent/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>

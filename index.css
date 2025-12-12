@@ -1,11 +1,6 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-@layer base {
-  html {
-    font-family: 'Inter', sans-serif;
-  }
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
 }
 
 /* Custom scrollbar for better aesthetics */
