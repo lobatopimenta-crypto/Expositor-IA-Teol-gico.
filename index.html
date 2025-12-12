@@ -4,51 +4,34 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Exegesis AI - Bible Study Assistant</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/gitbrent/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2024%2024'%20fill='none'%20stroke='%231c1917'%20stroke-width='2'%20stroke-linecap='round'%20stroke-linejoin='round'%3E%3Cpath%20d='M4%2019.5A2.5%202.5%200%200%201%206.5%2017H20'/%3E%3Cpath%20d='M6.5%202H20v20H6.5A2.5%202.5%200%200%201%204%2019.5v-15A2.5%202.5%200%200%201%206.5%202z'/%3E%3Cline%20x1='12'%20y1='6'%20x2='12'%20y2='12'/%3E%3Cline%20x1='9'%20y1='9'%20x2='15'%20y2='9'/%3E%3Cpath%20d='M12%202l1%202'/%3E%3Cpath%20d='M10%202.5l1%201.5'/%3E%3Cpath%20d='M14%202.5l-1%201.5'/%3E%3C/svg%3E">
+
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,300;0,400;0,700;1,300&display=swap" rel="stylesheet">
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            fontFamily: {
-              sans: ['Inter', 'sans-serif'],
-              serif: ['Merriweather', 'serif'],
-            },
-            colors: {
-              bible: {
-                50: '#fdfbf7',
-                100: '#f9f5eb',
-                200: '#f1e8d4',
-                300: '#e5d3b0',
-                400: '#d5b683',
-                500: '#c59a5c',
-                600: '#aa7e46',
-                700: '#896238',
-                800: '#714f33',
-                900: '#5e412d',
-              }
-            }
-          }
-        }
-      }
-    </script>
+    
+    <!-- External Libraries for Export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/gitbrent/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
+    
   <script type="importmap">
 {
   "imports": {
-    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.1/",
-    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.31.0",
-    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.556.0",
-    "react/": "https://aistudiocdn.com/react@^19.2.1/",
-    "react": "https://aistudiocdn.com/react@^19.2.1"
+    "react/": "https://aistudiocdn.com/react@^19.2.3/",
+    "react": "https://aistudiocdn.com/react@^19.2.3",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.33.0",
+    "vite": "https://aistudiocdn.com/vite@^7.2.7",
+    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.561.0",
+    "@vitejs/plugin-react": "https://aistudiocdn.com/@vitejs/plugin-react@^5.1.2",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.3/"
   }
 }
 </script>
 </head>
-  <body class="bg-gray-50 text-gray-900 h-screen overflow-hidden font-sans antialiased">
+  <body class="bg-stone-50 text-stone-900 h-screen overflow-hidden font-sans antialiased">
     <div id="root" class="h-full"></div>
   </body>
 </html>
